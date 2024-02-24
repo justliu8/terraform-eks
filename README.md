@@ -13,4 +13,6 @@ Run `terraform validate` to check for any configuration errors in the current di
 
 `terraform apply` will begin to provision the required resources and create the given infrastructure configuration based on the given plan.
 
+`terraform destroy` will destroy all of the infrastructure managed by the configuration.
+
 You can find the kubeconfig file in the respective folder for each cluster.
