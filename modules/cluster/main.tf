@@ -22,12 +22,13 @@ resource "kubernetes_service" "load_balancer" {
     }
     type = "LoadBalancer"
     selector = {
-      name = "load_balancer"
+      name = "loadbalancer"
     }
   }
 }
 
-resource "kubernetes_ingress" "ingress" {
+resource "kubernetes_ingress_v1" "ingress" {
+  wait_for_load_balancer = true
   metadata {
     name = "ingress"
     annotations = {
@@ -41,8 +42,12 @@ resource "kubernetes_ingress" "ingress" {
         path {
           path = "/*"
           backend {
-            service_name = "load_balancer"
-            service_port = 80
+            service {
+              name = "loadbalancer"
+              port {
+                number = 80
+              }
+            }
           }
         }
       }
@@ -76,10 +81,10 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "18.30.3"
+  version = "20.4.0"
 
   cluster_name    = "eks-${var.cluster_name}"
-  cluster_version = "1.24"
+  cluster_version = "1.29"
   subnet_ids      = module.vpc.private_subnets
   vpc_id          = module.vpc.vpc_id
 
@@ -122,7 +127,7 @@ resource "helm_release" "ingress" {
   name       = "ingress"
   chart      = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
-  version    = "1.4.6"
+  version    = "1.7.1"
 
   set {
     name  = "autoDiscoverAwsRegion"
