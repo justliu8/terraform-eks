@@ -17,11 +17,6 @@ jobs:
   validate:
     name: Validation
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        # We keep Terraform files in the terraform directory.
-        working-directory: ./terraform
     outputs:
       init_outcome: ${{ steps.init.outcome }}
       fmt_outcome: ${{ steps.fmt.outcome }}
